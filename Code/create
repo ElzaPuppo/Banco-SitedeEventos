@@ -1,0 +1,69 @@
+CREATE TABLE TipoEvento (
+	idtipoevento INTEGER PRIMARY KEY,
+	nomeTE VARCHAR
+)
+
+CREATE TABLE Notificacao (
+	idnoti SERIAL PRIMARY KEY,
+	texto VARCHAR
+)
+
+CREATE TABLE Usuario (
+	idusuario INTEGER PRIMARY KEY,
+	nomeP VARCHAR,
+	email VARCHAR,
+	tipousuario BOOLEAN
+)
+
+CREATE TABLE Evento (
+	idevento INTEGER PRIMARY KEY,
+	descricao VARCHAR,
+	dataE DATE NOT NULL,
+	valor INTEGER,
+	publico VARCHAR,
+	nomeE VARCHAR NOT NULL,
+	idusuarioOrg INTEGER NOT NULL,
+	idusuarioAdm INTEGER,
+	status BOOLEAN,
+	
+	FOREIGN KEY (idusuarioOrg) REFERENCES Usuario (idusuario),
+	FOREIGN KEY (idusuarioAdm) REFERENCES Usuario (idusuario)
+)
+
+CREATE TABLE gera (
+	idnoti INTEGER,
+	idusuario INTEGER,
+		
+	FOREIGN KEY(idnoti) REFERENCES Notificacao (idnoti),
+	FOREIGN KEY(idusuario) REFERENCES Usuario (idusuario)
+)
+
+CREATE TABLE interessa (
+	idtipoevento INTEGER,
+	idusuario INTEGER,
+	FOREIGN KEY(idtipoevento) REFERENCES TipoEvento (idtipoevento),
+	FOREIGN KEY(idusuario) REFERENCES Usuario (idusuario)
+)
+
+CREATE TABLE refere (
+	idevento INTEGER,
+	idtipoevento INTEGER,
+	FOREIGN KEY(idevento) REFERENCES Evento (idevento),
+	FOREIGN KEY(idtipoevento) REFERENCES TipoEvento (idtipoevento)
+)
+
+CREATE TABLE acessa (
+	idusuario INTEGER,
+	idevento INTEGER,
+	
+	FOREIGN KEY(idusuario) REFERENCES Usuario (idusuario),
+	FOREIGN KEY(idevento) REFERENCES Evento (idevento)
+)
+
+-- tabela de auditoria 
+CREATE TABLE relatorioStatus (
+	nomeAdm VARCHAR,	
+	nomeEvento VARCHAR,
+	dataAtualizacao date,
+	statusE VARCHAR
+)

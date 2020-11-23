@@ -1,0 +1,19 @@
+
+explain analyze select A.nomeP from Usuario A, gera P where A.idusuario=P.idusuario and A.email = '%hotmail' 
+
+explain analyze select A.nomeP from Usuario A, acessa P where A.idusuario=P.idusuario and A.nomeP = '%A'
+
+explain analyze select A.nomeE from Evento A, refere P where A.idevento=P.idevento and A.idevento = 12
+
+
+
+create index idx2a on refere using BTREE(idevento)
+
+create index idx3a on gera using BTREE(idusuario)
+
+create index idx1a on acessa using BTREE(idusuario)
+
+
+
+
+

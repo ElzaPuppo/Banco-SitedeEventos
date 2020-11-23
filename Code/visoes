@@ -1,0 +1,33 @@
+-- visão que mostra quais eventos nenhum usuario demonstrou interesse
+CREATE VIEW Interesses AS
+  SELECT Evento.nomeE as Evento,  	
+  		COUNT(interessa.idUsuario) as Numinteressados
+  FROM Evento
+  	 LEFT JOIN refere USING (idevento)
+  	 LEFT JOIN interessa USING (idtipoevento)
+     LEFT JOIN Tipoevento USING (idtipoevento)
+     LEFT JOIN Usuario USING (idusuario)
+	 GROUP BY Evento.nomeE
+	 HAVING COUNT(interessa.idUsuario)  <1
+	 ORDER BY COUNT(interessa.idUsuario) desc;
+
+-- visão que exibe quantos eventos foram analisados por cada Adm
+CREATE VIEW AnaliseAdm AS
+  SELECT Usuario.nomeP as Administrador,
+  		COUNT(Usuario.idusuario) as NumeroDeEventosAvaliados
+  FROM Evento
+  INNER JOIN Usuario ON(Usuario.idusuario = Evento.idusuarioAdm)
+	 WHERE Usuario.tipousuario IS TRUE
+	 GROUP BY nomeP
+	 ORDER BY NumeroDeEventosAvaliados;
+
+
+-- visão que exibe quantos eventos foram cadastrados por cada Org
+CREATE VIEW AnaliseOrg AS
+  SELECT Usuario.nomeP as Organizador,
+  		COUNT(Usuario.idusuario) as NumeroDeEventosCadastrados
+  FROM Evento
+  INNER JOIN Usuario ON(Usuario.idusuario = Evento.idusuarioOrg)
+	 WHERE Usuario.tipousuario IS FALSE
+	 GROUP BY nomeP
+	 ORDER BY NumeroDeEventosCadastrados;

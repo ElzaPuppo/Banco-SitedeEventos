@@ -1,0 +1,206 @@
+--função para nome de pessoa:
+Create or replace function nomeP() returns text as
+$$
+declare
+ nome text[] :=
+'{Alice,Miguel,Sophia,Arthur,Helena,Bernardo,Valentina,Heitor,Laura,Davi,Isabella,Lorenzo,Manuela,Théo,Júlia,Pedro,Heloísa,Gabriel,Luiza,Enzo,Maria Luiza,Matheus,Lorena,Lucas,Lívia,Benjamin,Giovanna,Nicolas,Maria Eduarda,Guilherme,Beatriz,Rafael,Maria Clara,Joaquim,Cecília,Samuel,Eloá,Enzo Gabriel,Lara,João Miguel,Maria Júlia,Henrique,Isadora,Gustavo,Mariana,Murilo,Emanuelly,Pedro Henrique,Ana Júlia,Pietro,Ana Luiza,Lucca,Ana Clara,Felipe,Melissa,João Pedro,Yasmin,Isaac,Maria Alice,Benício,Isabelly,Daniel,Lavínia,Anthony,Esther,Leonardo,Sarah,Davi Lucca,Elisa,Bryan,Antonella,Eduardo,Rafaela,João Lucas,Maria Cecília,Victor,Liz,João,Marina,Cauã,Nicole,Antônio,Maitê,Vicente,Isis,Caleb,Alícia,Gael,Luna,Bento,Rebeca,Caio,Agatha,Emanuel,Letícia,Vinícius,Maria,João Guilherme,Gabriela,Davi Lucas,Ana Laura,Noah,Catarina,João Gabriel,Clara,João Victor,Ana Beatriz,Luiz Miguel,Vitória,Francisco,Olívia,Kaique,Maria Fernanda,Otávio,Emilly,Augusto,Maria Valentina,Levi,Milena,Yuri,Maria Helena,Enrico,Bianca,Thiago,Larissa,Ian,Mirella,Victor Hugo,Maria Flor,Thomas,Allana,Henry,Ana Sophia,Luiz Felipe,Clarice,Ryan,Pietra,Arthur Miguel,Maria Vitória,Davi Luiz,Maya,Nathan,Laís,Pedro Lucas,Ayla,Davi Miguel,Ana Lívia,Raul,Eduarda,Pedro Miguel,Mariah,Luiz Henrique,Stella,Luan,Ana,Erick,Gabrielly,Martin,Sophie,Bruno,Carolina,Rodrigo,Maria Laura,Luiz Gustavo,Maria Heloísa,Arthur Gabriel,Maria Sophia,Breno,Fernanda,Kauê,Malu,Enzo Miguel,Analu,Fernando,Amanda,Arthur Henrique,Aurora,Luiz Otávio,Maria Isis,Carlos Eduardo,Louise,Tomás,Heloise,Lucas Gabriel,Ana Vitória,André,Ana Cecília,José,Ana Liz,Yago,Joana,Danilo,Luana,Anthony Gabriel,Antônia,Ruan,Isabel,Miguel Henrique,Bruna,Oliver}';
+ sobrenome text[] := 
+ '{Agostinho,Aguiar,Albuquerque,Alegria,Alencastro,Almada,Alves,Alvim,Amorim,Andrade,Antunes,Aparício,Apolinário,Araújo,Arruda,Assis,Assunção,Ávila,Azambuja,Baptista,Barreto,Barros,Beira-Mar,Belchior,Belém,Bernardes,Bittencourt,Boaventura,Bonfim,Botelho,Brites,Brito,Caetano,Calixto,Camacho,Camilo,Capelo,Castro,Cavalcante,Chaves,Conceição,Corte Real,Cortês,Coutinho,Crespo,Cunha,Curado,Custódio,Córdoba,Damásio,Dantas,Dias,Dinís,Domingues,Dorneles,dos Reis,Drumond,D’Ávila,Escobar,Espinosa,Esteves,Evangelista,Farias,Ferrari,Figueiredo,Figueiroa,Flores,Fogaça,Freitas,Frutuoso,Furtado,Félix,Galvão,Garcia,Gaspar,Gentil,Geraldes,Gil,Godinho,Gomes,Gonzaga,Goulart,Gouveia,Guedes,Guimarães,Guterres,Góis,Hernandes,Hilário,Hipólito,Ibrahim,Ilha,Infante,Jaques,Jesus,Jordão,Lacerda,Lancastre,Leiria,Lessa,Machado,Maciel,Magalhães,Maia,Maldonado,Marinho,Marques,Martins,Medeiros,Meireles,Mello,Mendes,Menezes,Mesquita,Modesto,Monteiro,Morais,Moreira,Morgado,Moura,Muniz,Neves,Nogueira,Novais,Nóbrega,Ornélas,Oliveira,Ourique,Pacheco,Padilha,Paiva,Paraíso,Paris,Peixoto,Peralta,Peres,Pilar,Pimenta,Pinheiro,Portela,Quaresma,Quarteira,Queiroz,Ramires,Ramos,Rebelo,Resende,Ribeiro,Salazar,Sales,Salgado,Salgueiro,Sampaio,Sanches,Santana,Siqueira,Soares,Subtil,Tavares,Taveira,Teixeira,Teles,Torres,Trindade,Varela,Vargas,Vasconcelos,Vasques,Veiga,Veloso,Vidal,Vieira,Vilela,Xavier,Ximenes,Xisco,Zagalo,Zanette,Zaganelli}';
+ result text := '';
+begin
+ result := result || nome[1+random()*(array_length(nome, 1)-1)] || ' ' ;
+ result := result || sobrenome[1+random()*(array_length(sobrenome, 1)-1)];
+ --raise notice '%', result;
+ return result;
+end;
+$$ language plpgsql;
+
+--função para nome de evento:
+Create or replace function nomeE() returns text as
+$$
+declare
+ nomeE text[] :=
+'{Festa,Simpósio,Multirão,Palestra,Reunião,Oficina,Exposição,Encontro,Curso,Minicurso,Mesa Redonda,Aula}';
+ sobrenomeE text[] := 
+ '{da Música,do Violão,de Artes Marciais,de Marcenaria,de Inglês,de Origami,de Rock,de Inteligência Artificial,de Controle Digital,de Yoga,de Relaxamento,de Artes Plásticas}';
+ result text := '';
+begin
+ result := result || nomeE[1+random()*(array_length(nomeE, 1)-1)] || ' ' ;
+ result := result || sobrenomeE[1+random()*(array_length(sobrenomeE, 1)-1)];
+ --raise notice '%', result;
+ return result;
+end;
+$$ language plpgsql;
+
+--função para tipo de evento:
+Create or replace function TipoE(posicao integer) returns text as
+$$
+declare
+ tipoE text[] :=
+'{Festa,Artes,Música,Conferência,Palestra,Rock,Axé,Dança,Teatro,Simpósio,Multirão,Reunião,Oficina,Exposição,Encontro,Curso,Minicurso,Mesa Redonda,Aula}';
+ result text := '';
+begin
+ result := result || tipoE[posicao] ;
+  --raise notice '%', result;
+ return result;
+end;
+$$ language plpgsql;
+
+--função de idade:
+Create or replace function idade() returns text as
+$$
+declare
+ idadeE text[] :=
+'{Público Livre,14+,18+}';
+ result text := '';
+begin
+ result := result || idadeE[1+random()*(array_length(idadeE, 1)-1)] ;
+  --raise notice '%', result;
+ return result;
+end;
+$$ language plpgsql;
+
+--função de valor:
+create or replace function numero() returns integer as
+$$
+declare
+result integer := 0;
+begin
+ result := random() * 10 + 1;
+  --raise notice '%', result;
+ return result;
+ end;
+$$language plpgsql;
+
+--função de público:
+Create or replace function publico() returns text as
+$$
+declare
+ publicoE text[] :=
+'{Infantil,Juvenil,Adulto,Terceira Idade}';
+ result text := '';
+begin
+ result := result || publicoE[1+random()*(array_length(publicoE, 1)-1)] ;
+ -- raise notice '%', result;
+ return result;
+end;
+$$ language plpgsql;
+
+--função de data:
+create or replace function dataE() returns date as
+$$
+ begin
+ return date(timestamp '2019-01-01 00:00:00' +
+ random() * (timestamp '2019-01-30 00:00:00' -
+ timestamp '2019-01-01 00:00:00'));
+ end;
+$$language plpgsql;
+
+--função de email:
+Create or replace function email() returns text as
+$$
+declare
+ mail text[] :=
+'{Alice,Miguel,Sophia,Arthur,Helena,Bernardo,Valentina,Heitor,Laura,Davi,Isabella,Lorenzo,Manuela,Theo,Julia,Pedro,Heloisa,Gabriel,Luiza,Enzo,Maria Luiza,Matheus,Lorena,Lucas,Livia,Benjamin,Giovanna,Nicolas,Maria Eduarda,Guilherme,Beatriz,Rafael,Maria Clara,Joaquim,Cecilia,Samuel,Eloa,Enzo Gabriel,Lara,João Miguel,Maria Julia,Henrique,Isadora,Gustavo,Mariana,Murilo,Emanuelly,Pedro Henrique,Ana Julia,Pietro,Ana Luiza,Lucca,Ana Clara,Felipe,Melissa,João Pedro,Yasmin,Isaac,Maria Alice,Benicio,Isabelly,Daniel,Lavinia,Anthony,Esther,Leonardo,Sarah,Davi Lucca,Elisa,Bryan,Antonella,Eduardo,Rafaela,João Lucas,Maria Cecilia,Victor,Liz,João,Marina,Cauã,Nicole,Antônio,Maitê,Vicente,Isis,Caleb,Alicia,Gael,Luna,Bento,Rebeca,Caio,Agatha,Emanuel,Leticia,Vinicius,Maria,João Guilherme,Gabriela,Davi Lucas,Ana Laura,Noah,Catarina,João Gabriel,Clara,João Victor,Ana Beatriz,Luiz Miguel,Vitoria,Francisco,Olivia,Kaique,Maria Fernanda,Otavio,Emilly,Augusto,Maria Valentina,Levi,Milena,Yuri,Maria Helena,Enrico,Bianca,Thiago,Larissa,Ian,Mirella,Victor Hugo,Maria Flor,Thomas,Allana,Henry,Ana Sophia,Luiz Felipe,Clarice,Ryan,Pietra,Arthur Miguel,Maria Vitoria,Davi Luiz,Maya,Nathan,Lais,Pedro Lucas,Ayla,Davi Miguel,Ana Livia,Raul,Eduarda,Pedro Miguel,Mariah,Luiz Henrique,Stella,Luan,Ana,Erick,Gabrielly,Martin,Sophie,Bruno,Carolina,Rodrigo,Maria Laura,Luiz Gustavo,Maria Heloisa,Arthur Gabriel,Maria Sophia,Breno,Fernanda,Kauê,Malu,Enzo Miguel,Analu,Fernando,Amanda,Arthur Henrique,Aurora,Luiz Otavio,Maria Isis,Carlos Eduardo,Louise,Tomas,Heloise,Lucas Gabriel,Ana Vitoria,Andre,Ana Cecilia,Jose,Ana Liz,Yago,Joana,Danilo,Luana,Anthony Gabriel,Antônia,Ruan,Isabel,Miguel Henrique,Bruna,Oliver}';
+ complemento text[] := 
+ '{linda,2019,dainformatica,juninho,bola,arcoiris,vidaloka,bomdegole,potter,lerigou}';
+ arroba text[] := 
+ '{hotmail.com,gmail.com,live.com.br,utfpr.edu.br,alunos.utfpr.edu.br,yahoo.com.br}';
+ result text := '';
+begin
+ result := result || replace(mail[1+random()*(array_length(mail, 1)-1)],' ','') 
+ || complemento[1+random()*(array_length(complemento, 1)-1)] || '@' 
+ || arroba[1+random()*(array_length(arroba, 1)-1)];
+ --raise notice '%', result;
+ return result;
+end;
+$$ language plpgsql;
+
+--função de texto de descrição
+Create or replace function texto(tamanho integer) returns text as
+$$
+declare
+chars text[] := '{A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z,a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z}';
+result text := '';
+i integer := 0;
+begin
+if tamanho < 0 then
+raise exception 'Tamanho dado nao pode ser menor que zero';
+end if;
+for i in 1..tamanho loop
+result := result || chars[1+random()*(array_length(chars, 1)-1)];
+end loop;
+return result;
+end;
+$$ language plpgsql;
+
+--funcao pra combinar tabelas
+Create or replace function combina(idmaximo integer) returns integer as
+$$
+declare
+result integer := (1+random()*(idmaximo));
+begin
+return result;
+end;
+$$ language plpgsql;
+
+--POPULANDO::::
+
+-- colocamos a cada 50 usuários um do tipo administrador e a cada 80 um tipo organizador
+do $$
+begin
+for i in 0..1000 loop
+	IF (i % 50) = 0 THEN
+		insert into Usuario(idusuario, nomeP, email, tipousuario) values (i, nomeP(),email(),TRUE);
+	ELSIF (i % 80) = 0 THEN
+		insert into Usuario(idusuario, nomeP, email, tipousuario) values (i, nomeP(),email(),FALSE);
+	ELSE
+		insert into Usuario(idusuario, nomeP, email, tipousuario) values (i, nomeP(),email(),NULL);
+	end if;
+end loop;
+end $$
+
+-- é necessário colocar um valor multiplo de 80 (que não seja multiplo de 50) para que a trigger autorize o cadastro do evento
+do $$
+begin
+for i in 1..255 loop
+insert into Evento(idevento, descricao, dataE, valor, publico, nomeE, idusuarioOrg, idusuarioAdm, status) 
+values (i,texto(40),dataE(),numero(),publico(),nomeE(), 80, NULL, NULL) on conflict do nothing;
+end loop;
+end $$
+
+--o vetor com nomes diferentes para os tipos de eventos tem somente 19 índices
+do $$
+begin
+for i in 1..19 loop
+insert into TipoEvento(idtipoevento, nomeTE) values (i, TipoE(i));
+end loop;
+end $$
+
+do $$
+begin
+for i in 0..4000 loop
+insert into acessa(idevento,idusuario) values (combina(149),combina(200));
+end loop;
+end $$
+
+do $$
+begin
+for i in 1..80 loop
+insert into interessa(idtipoevento,idusuario) values (combina(15),combina(200));
+end loop;
+end $$
+
+-- o modo com o a insersão está sendo feita garante que cada evento terá ao menos 1 tipodeevento
+do $$
+begin
+for i in 1..250 loop
+insert into refere(idevento,idtipoevento) values (i,combina(15));
+end loop;
+end $$
+
+-- chamando atualização de status de evento por adm, enviando o id do evento, o id do adm e o novo status
+SELECT * from atualizastatus(112,250,true);
+SELECT * from atualizastatus(130,250,true);
+SELECT * from atualizastatus(80,100,false);
+SELECT * from atualizastatus(82,110,false); -- a trigger verificaAdm bloqueia essa atualização pois o usuario n é ADM

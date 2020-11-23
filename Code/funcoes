@@ -1,0 +1,59 @@
+-- função que atualiza o status do evento dependendo da avaliação do Adm, se foi positiva ou negativa
+-- necessitamos de todos os dados do evento novamente para que esses dados sejam enviados para UPDATE
+-- onde aciona a trigger que gera notificação
+create or replace function atualizastatus(numevento integer,idUser integer, statusNew BOOLEAN) returns varchar as
+$$
+BEGIN
+ UPDATE Evento SET
+ 	idevento = numevento,
+ 	descricao = (SELECT descricao FROM evento WHERE idevento = numevento),
+ 	dataE =(SELECT dataE FROM evento WHERE idevento = numevento),
+ 	valor =(SELECT valor FROM evento WHERE idevento = numevento),
+ 	publico =(SELECT publico FROM evento WHERE idevento = numevento),
+ 	nomeE =(SELECT nomeE FROM evento WHERE idevento = numevento),
+ 	idusuarioOrg =(SELECT idusuarioOrg FROM evento WHERE idevento = numevento),
+ 	idusuarioAdm = idUser,
+ 	status = statusnew
+ 	WHERE idevento = numevento; 
+
+  RETURN 'Status atualizado';
+END;
+$$language plpgsql;
+
+-- função que retorna quais tipo de eventos que os usuários tem interesse
+create or replace function Interesses() returns TABLE(NomeTipoEvento varchar, Interessados bigint) as
+$$
+DECLARE 
+	Nome varchar;
+	Interessados integer;
+BEGIN
+	   RETURN QUERY 
+	   SELECT TipoEvento.nomeTE  , COUNT(TipoEvento.idtipoevento) 
+       FROM Usuario
+	   INNER JOIN interessa USING (idusuario)
+	   INNER JOIN TipoEvento USING (idtipoevento)
+	   GROUP BY TipoEvento.idtipoevento
+	   ORDER BY COUNT(TipoEvento.idtipoevento) desc;
+END;
+$$language plpgsql;
+
+
+-- função que cria o texto para exibir a notificação pro usuário, chamada automaticamente quando uma notificação for gerada
+create or replace function TextoNoti(idEv integer) returns VARCHAR as
+$$
+DECLARE
+	TextoNoti varchar = 'Evento: ';
+	Texto2Noti varchar = 'que acontecerá em:';
+	Texto3Noti varchar = 'talvez seja de seu interesse';
+	Nomes varchar = ' ';
+	Datas varchar =' ';
+BEGIN
+       SELECT Evento.nomeE into Nomes
+       FROM Evento WHERE idevento = idEv;
+	   SELECT Evento.dataE into Datas
+	   FROM Evento WHERE idevento = idEv;
+	
+	   TextoNoti = TextoNoti || ' ' || Nomes || ' '|| Texto2Noti || ' '|| Datas || ' '|| Texto3Noti;
+	   RETURN TextoNoti; 
+END;
+$$language plpgsql;

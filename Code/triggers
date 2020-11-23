@@ -1,0 +1,77 @@
+-- trigger que adiciona uma notificação quando um evento for aprovado e for compatível com o tipo de evento
+-- de interesse de algum usuário
+CREATE OR REPLACE FUNCTION geraNotificacao()
+RETURNS trigger AS $$
+DECLARE
+	posicao integer;
+	Interessados CURSOR FOR SELECT idusuario 
+	FROM Usuario
+	INNER JOIN interessa USING (idusuario)
+    WHERE idtipoevento in (select idtipoevento from refere where idevento = new.idevento);
+BEGIN
+	IF (new.status IS TRUE) THEN
+		INSERT INTO Notificacao (texto) VALUES (TextoNoti(new.idevento)) returning idnoti into posicao;
+		FOR i in Interessados 
+		LOOP
+			INSERT INTO gera VALUES (posicao, i.idusuario);
+		END loop;
+	END IF;
+RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+CREATE TRIGGER TriggNoti AFTER UPDATE ON Evento
+FOR EACH ROW EXECUTE PROCEDURE geraNotificacao();
+
+
+-- trigger que verifica se o usuario que está adicionando um evento é Org (tipousuario TRUE)
+CREATE OR REPLACE FUNCTION verificaOrg()
+RETURNS trigger AS $$
+BEGIN
+ 	IF (((SELECT tipousuario FROM Usuario WHERE Usuario.idusuario = new.idusuarioOrg) IS NULL)  
+		OR ((SELECT tipousuario FROM Usuario WHERE Usuario.idusuario = new.idusuarioOrg) IS TRUE) )  THEN
+		raise exception 'Usuario não tem permissao para adicionar evento';
+	END IF;
+	RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+CREATE TRIGGER TriggerOrg BEFORE INSERT ON Evento
+FOR EACH ROW EXECUTE PROCEDURE verificaOrg();
+
+
+-- trigger que verifica se o usuario avaliando um evento é Adm (tipousuario FALSE)
+CREATE OR REPLACE FUNCTION verificaAdm()
+RETURNS trigger AS $$
+DECLARE 
+	verifica1 boolean;
+BEGIN
+	SELECT tipousuario into verifica1 FROM Usuario WHERE Usuario.idusuario = new.idusuarioAdm;
+	IF ((verifica1 IS NULL)  or (verifica1 IS FALSE) ) THEN
+			raise exception 'Usuario n tem permissao para atualizar evento';
+	END IF;
+	RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+CREATE TRIGGER TriggerAdm BEFORE UPDATE on Evento
+FOR EACH ROW EXECUTE PROCEDURE verificaAdm();
+
+
+--trigger que adiciona os itens na tabela de auditoria
+CREATE OR REPLACE FUNCTION relatorioAtualizaStatus()
+RETURNS TRIGGER AS $auditoria$
+DECLARE 
+	statusNome varchar = '';
+BEGIN
+	IF (NEW.status IS TRUE) THEN 
+		statusNome = 'Aprovado';
+	ELSIF (NEW.status IS FALSE) THEN 
+		statusNome = 'Reprovado';
+	END IF;
+
+	INSERT INTO relatorioStatus SELECT nomeP, new.nomeE, now(), statusNome
+				FROM Usuario WHERE new.idusuarioAdm = idusuario;
+	RETURN NEW;
+END;
+$auditoria$ LANGUAGE plpgsql;
+CREATE TRIGGER statusauditoria
+AFTER UPDATE ON Evento
+FOR EACH ROW EXECUTE PROCEDURE relatorioAtualizaStatus();
